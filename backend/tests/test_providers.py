@@ -4,6 +4,7 @@ Unit tests for provider service.
 
 from maparr.services.providers import builtin_providers, get_provider
 
+
 def test_builtin_providers_not_empty():
     providers = builtin_providers()
     assert len(providers) > 0
@@ -12,7 +13,6 @@ def test_builtin_providers_not_empty():
     assert 'osm-standard' in ids
 
 def test_get_provider_returns_correct():
-    providers = builtin_providers()
     osm = get_provider('osm-standard')
     assert osm is not None
     assert osm.name == 'OpenStreetMap (Standard)'

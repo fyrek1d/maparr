@@ -4,6 +4,7 @@ Simple tests for geocoder service.
 
 from maparr.services.geocoder import get_geocoder
 
+
 def test_geocoder_search_returns_results():
     geocoder = get_geocoder()
     results = geocoder.search('London', limit=5)

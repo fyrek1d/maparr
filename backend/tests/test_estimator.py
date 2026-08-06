@@ -4,6 +4,7 @@ Test for estimator service.
 
 from maparr.services.estimator import estimate_download
 
+
 def test_estimate_returns_positive():
     # Small bbox: 1 degree square approx 111km x 111km at equator
     bbox = [0, 0, 1, 1]
