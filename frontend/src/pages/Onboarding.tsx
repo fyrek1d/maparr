@@ -1,14 +1,15 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/store'
-import { Button, Card, Input, Select } from '@/components/ui'
-import { Plus, ShieldCheck, Map, Activity } from 'lucide-react'
+import { Button, Card, Input } from '@/components/ui'
+
 import { api } from '@/lib/api'
 import toast from 'react-hot-toast'
+import { Provider, MapItem } from "@/lib/types"
 
 export default function Onboarding() {
   const navigate = useNavigate()
-  const { login } = useAuth()
+   const { login } = useAuth();
   const [step, setStep] = useState(0) // 0: welcome, 1: create admin, 2: optional map, 3: done
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
@@ -66,7 +67,7 @@ export default function Onboarding() {
             </p>
             <Button onClick={nextStep} className="w-full">
               Get Started
-            </button>
+            </Button>
           </>
         )}
         {step === 1 && (
@@ -98,7 +99,7 @@ export default function Onboarding() {
               />
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? 'Creating…' : 'Create Account'}
-              </button>
+              </Button>
             </form>
             <Button variant="ghost" onClick={handleSkip} className="w-full">
               I already have an account, login
@@ -116,16 +117,16 @@ export default function Onboarding() {
             <div className="space-y-4">
               <Button onClick={nextStep} className="w-full">
                 Skip for now
-              </button>
+              </Button>
               <Button
                 onClick={async () => {
                   // For simplicity, we'll just create a map for world (bbox entire world) using osm provider
                   try {
                     // Get provider OSM standard
-                    const providers = await api.get('/providers')
-                    const osm = providers.data.find((p: any) => p.id === 'osm-standard')
+                    const providers = await api.get<Provider[]>('/providers')
+                    const osm = providers.find((p: Provider) => p.id === 'osm-standard')
                     if (!osm) throw new Error('OSM provider not found')
-                    const map = await api.post('/maps', {
+                    const map = await api.post<MapItem>('/maps', {
                       provider_id: osm.id,
                       region_id: 'world',
                       region_name: 'World',
@@ -144,7 +145,7 @@ export default function Onboarding() {
                 className="w-full"
               >
                 Download World Map (low zoom)
-              </button>
+              </Button>
             </div>
           </>
         )}
@@ -158,7 +159,7 @@ export default function Onboarding() {
             </p>
             <Button onClick={() => navigate('/')} className="w-full">
               Go to Dashboard
-            </button>
+            </Button>
           </>
         )}
       </Card>

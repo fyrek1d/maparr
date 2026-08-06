@@ -187,6 +187,13 @@ export interface SystemStats {
   uptime_seconds: number
 }
 
+export interface IntegrityResult {
+  map_id: string
+  name: string
+  ok: boolean
+  tiles: number
+  errors: string[]
+}
 export interface OnboardingStatus {
   setup_complete: boolean
   users_exist: boolean

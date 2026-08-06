@@ -18,7 +18,7 @@ def test_geocoder_search_returns_results():
 def test_geocoder_reverse_returns_location():
     geocoder = get_geocoder()
     # Coordinates for Greenwich, London
-    results = geocoder.reverse(51.4769, -0.0005, max_dist=10, limit=1)
+    results = geocoder.reverse(51.4769, -0.0005, max_distance_km=10, limit=1)
     assert isinstance(results, list)
     if len(results) > 0:
         res = results[0]

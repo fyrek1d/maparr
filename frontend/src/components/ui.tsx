@@ -5,7 +5,7 @@ import clsx from 'clsx'
 import { X } from 'lucide-react'
 import { classNames } from '@/lib/utils'
 
-type BtnVariant = 'primary' | 'secondary' | 'danger' | 'ghost' | 'outline'
+type BtnVariant = 'primary' | 'secondary' | 'danger' | 'ghost' | 'outline' | 'destructive'
 
 export function Button({
   variant = 'primary',
@@ -27,6 +27,7 @@ export function Button({
           danger: 'bg-red-600 text-white hover:bg-red-700',
           ghost: 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800',
           outline: 'border border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800',
+           destructive: 'bg-red-600 text-white hover:bg-red-700',
         }[variant],
         {
           sm: 'px-2.5 py-1.5 text-xs',

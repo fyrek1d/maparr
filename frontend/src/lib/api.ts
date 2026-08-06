@@ -54,9 +54,10 @@ async function refreshAccess(): Promise<string> {
         body: JSON.stringify({ refresh_token: tokens.refresh_token }),
       })
       if (!res.ok) throw new Error('token refresh failed')
-      const data = (await res.json()) as Tokens
-      setTokens({ access_token: data.access_token, refresh_token: data.refresh_token })
-      return data.access_token
+    const data = (await res.json()) as Tokens
+    if (!data) throw new Error('Invalid token response')
+    setTokens({ access_token: data.access_token, refresh_token: data.refresh_token })
+    return data.access_token
     })()
   }
   try {

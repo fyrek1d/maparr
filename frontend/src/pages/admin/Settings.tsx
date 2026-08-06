@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/store'
-import { Button, Card, Input, Select, Switch } from '@/components/ui'
+import { Button, Card, Input, Select } from '@/components/ui'
 import { api } from '@/lib/api'
 import { formatDate } from '@/lib/utils'
 import { Bell, ShieldCheck, Map, Activity, ServerCog, Zap, X } from 'lucide-react'
@@ -136,13 +136,17 @@ export default function Settings() {
           <ServerCog size={24} className="text-blue-600" />
           <h2 className="text-lg font-semibold">LDAP / Active Directory</h2>
         </div>
-        <Switch
-          checked={ldapConfig.enabled}
-          onChange={e => setLdapConfig({ ...ldapConfig, enabled: e.target.checked })}
-          className="mb-4"
-        >
-          Enable LDAP authentication
-        </Switch>
+          <div className="mb-4 flex items-center space-x-2">
+            <input
+              type="checkbox"
+              checked={ldapConfig.enabled}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setLdapConfig({ ...ldapConfig, enabled: e.target.checked })}
+              className="h-4 w-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+            />
+            <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+              Enable LDAP authentication
+            </span>
+          </div>
         <div className="space-y-4">
           <Input
             label="LDAP Server URL"
@@ -180,11 +184,11 @@ export default function Settings() {
             value={ldapConfig.user_attr_map}
             onChange={e => setLdapConfig({ ...ldapConfig, user_attr_map: e.target.value })}
           />
-          <Select
-            label="Default Role"
-            value={ldapConfig.default_role}
-            onChange={e => setLdapConfig({ ...ldapConfig, default_row: e.target.value })}
-          >
+           <Select
+             label="Default Role"
+             value={ldapConfig.default_role}
+             onChange={e => setLdapConfig({ ...ldapConfig, default_role: e.target.value })}
+           >
             <option value="user">User</option>
             <option value="admin">Administrator</option>
           </Select>
@@ -244,7 +248,7 @@ export default function Settings() {
                         Edit
                       </Button>
                       <Button
-                        variant="destructive"
+                        variant="danger"
                         size="sm"
                         onClick={() => deleteOidcProvider(p.id)}
                       >
@@ -345,56 +349,56 @@ export default function Settings() {
         </div>
       </Card>
 
-      {/* Notifications Settings (existing) - simplified placeholder */}
-      <Card className="p-6">
-        <div className="flex items-center gap-3 mb-4">
-          <Bell size={24} className="text-red-500" />
-          <h2 className="text-lg font-semibold">Notifications</h2>
-        </div>
-        <p className="text-sm text-gray-500 mb-4">
-          Configure ntfy.sh, webhook, or other notification services via the
-          <code className="bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded">/settings/notification</code>
-          endpoint or through the API.
-        </p>
-      </div>
+       {/* Notifications Settings (existing) - simplified placeholder */}
+       <Card className="p-6">
+         <div className="flex items-center gap-3 mb-4">
+           <Bell size={24} className="text-red-500" />
+           <h2 className="text-lg font-semibold">Notifications</h2>
+         </div>
+         <p className="text-sm text-gray-500 mb-4">
+           Configure ntfy.sh, webhook, or other notification services via the
+           <code className="bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded">/settings/notification</code>
+           endpoint or through the API.
+         </p>
+       </Card>
 
-      {/* Maintenance & Backup (existing) - simplified placeholder */}
-      <Card className="p-6">
-        <div className="flex items-center gap-3 mb-4">
-          <Activity size={24} className="text-green-600" />
-          <h2 className="text-lg font-semibold">Maintenance & Backup</h2>
-        </div>
-        <div className="space-y-4">
-          <Button onClick={() => {
-            if (!window.confirm('Run maintenance now? (may take a moment)')) return
-            // trigger via API
-            fetch('/api/settings/maintenance', { method: 'POST' })
-              .then(r => {
-                if (r.ok) toast.success('Maintenance triggered')
-                else throw new Error('Failed')
-              })
-              .catch(() => toast.error('Could not trigger maintenance'))
-          }}>
-            Run Maintenance Now
-          </Button>
-          <Button onClick={() => {
-            if (!window.confirm('Create a backup of all data (including maps)?')) return
-            fetch('/api/settings/backups?include_maps=true', { method: 'POST' })
-              .then(r => {
-                if (r.ok) {
-                  r.json().then(data => {
-                    toast.success(`Backup created: ${data.name}`)
-                  })
-                } else {
-                  throw new Error('Failed')
-                }
-              })
-              .catch(() => toast.error('Backup failed'))
-          }}>
-            Create Backup
-          </Button>
-        </div>
-      </Card>
-    </div>
-  )
-}
+       {/* Maintenance & Backup (existing) - simplified placeholder */}
+       <Card className="p-6">
+         <div className="flex items-center gap-3 mb-4">
+           <Activity size={24} className="text-green-600" />
+           <h2 className="text-lg font-semibold">Maintenance & Backup</h2>
+         </div>
+         <div className="space-y-4">
+           <Button onClick={() => {
+             if (!window.confirm('Run maintenance now? (may take a moment)')) return
+             // trigger via API
+             fetch('/api/settings/maintenance', { method: 'POST' })
+               .then(r => {
+                 if (r.ok) toast.success('Maintenance triggered')
+                 else throw new Error('Failed')
+               })
+               .catch(() => toast.error('Could not trigger maintenance'))
+           }}>
+             Run Maintenance Now
+           </Button>
+           <Button onClick={() => {
+             if (!window.confirm('Create a backup of all data (including maps)?')) return
+             fetch('/api/settings/backups?include_maps=true', { method: 'POST' })
+               .then(r => {
+                 if (r.ok) {
+                   r.json().then(data => {
+                     toast.success(`Backup created: ${data.name}`)
+                   })
+                 } else {
+                   throw new Error('Failed')
+                 }
+               })
+               .catch(() => toast.error('Backup failed'))
+           }}>
+             Create Backup
+            </Button>
+          </div>
+        </Card>
+      </div>
+    );
+  }

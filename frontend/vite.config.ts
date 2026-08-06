@@ -21,8 +21,8 @@ export default defineConfig({
       output: {
         manualChunks: {
           'react': ['react', 'react-dom'],
-          'leaflet': ['leaflet', 'react-leaflet'],
-          'utils': ['axios', 'clsx', 'date-fns'],
+          'leaflet': ['leaflet', 'leaflet-measure'],
+          'utils': ['clsx', 'date-fns', 'zustand'],
         },
       },
     },

@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "maparr"
 version = "0.1.0"
 description = "Self-hosted offline map manager for homeservers"
-readme = "../README.md"
+readme = "../../README.md"
 requires-python = ">=3.11"
 license = { text = "Apache-2.0" }
 authors = [{ name = "Maparr Contributors" }]

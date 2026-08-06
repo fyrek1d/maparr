@@ -58,7 +58,8 @@ def find_country(iso: str | None = None, name: str | None = None) -> dict | None
     if name:
         name = name.lower()
         for c in countries():
-            for n in (c.get("name") or "", *c.get("names") or []):
+            names = [c.get("name") or ""] + (c.get("names") or [])
+            for n in names:
                 if n and n.lower() == name:
                     return c
     return None

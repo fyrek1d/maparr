@@ -6,7 +6,7 @@ import { Layers, Search, ShieldCheck, Trash2 } from 'lucide-react'
 import { Badge, Button, Card, EmptyState, Input, PageHeader } from '@/components/ui'
 import { api } from '@/lib/api'
 import { formatBytes, formatDate } from '@/lib/utils'
-import type { MapItem } from '@/lib/types'
+import type { MapItem, IntegrityResult } from "@/lib/types"
 
 export default function Library() {
   const [q, setQ] = useState('')
@@ -51,7 +51,7 @@ export default function Library() {
               <Button size="sm" onClick={() => window.open(`/map/${m.id}`, '_blank')}>Open in viewer</Button>
               <Button size="sm" variant="outline" onClick={async () => {
                 try {
-                  const r = await api.post(`/maps/${m.id}/integrity`)
+                  const r = await api.post<IntegrityResult>(`/maps/${m.id}/integrity`)
                   toast.success(r.ok ? 'Integrity OK' : `Integrity issues: ${r.errors.length}`)
                   setTick((t) => t + 1)
                 } catch (e: any) { toast.error(e.detail) }

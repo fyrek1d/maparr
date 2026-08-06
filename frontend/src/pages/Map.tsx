@@ -2,12 +2,12 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import 'leaflet-measure/dist/measure.css'
-import LMeasure from 'leaflet-measure'
+import 'leaflet-measure'
 import 'leaflet/dist/images/marker-icon.png'
 import 'leaflet/dist/images/marker-shadow.png'
 import { PageHeader } from '@/components/ui'
 import { api } from '@/lib/api'
+import { SearchResult, MapItem } from "@/lib/types"
 import { formatCoords } from '@/lib/utils'
 import { Search } from 'lucide-react'
 import { useAuth } from '@/store'
@@ -41,11 +41,11 @@ export default function MapPage() {
       setLoading(true)
       setError(null)
       try {
-        let detail: any = null
+        let detail: MapItem | null = null
         if (mapId) {
-          detail = await api.get(`/maps/${mapId}`)
+          detail = await api.get<MapItem>(`/maps/${mapId}`)
         } else {
-          const maps = await api.get(`/maps?status=complete`)
+           const maps = await api.get<MapItem[]>(`/maps?status=complete`)
           if (maps.length) detail = maps[0]
         }
 
@@ -76,7 +76,7 @@ export default function MapPage() {
         L.control.scale({ imperial: false, metric: true }).addTo(map)
 
         // Add measure control
-        const measureControl = new LMeasure()
+        const measureControl = (L as any).control.measure()
         measureControl.addTo(map)
 
         // Optional: add layer control for base/overlays (if any)
@@ -117,7 +117,7 @@ export default function MapPage() {
     const q = query.trim()
     if (!q || !mapRef.current) return
     try {
-      const results = await api.get(`/search?q=${encodeURIComponent(q)}`)
+      const results = await api.get<SearchResult[]>(`/search?q=${encodeURIComponent(q)}`)
       if (results.length) {
         const r = results[0]
         mapRef.current.setView([r.lat, r.lon], 12)

@@ -176,8 +176,7 @@ def builtin_providers() -> list[Provider]:
             name="OpenTopoMap (Topographic)",
             description="Topographic basemap with contours, relief and hillshading.",
             url_template="https://tile.opentopomap.org/{z}/{x}/{y}.png",
-            attribution="© OpenStreetMap contributors, SRTM |
-                ODbL/CC BY-SA",
+            attribution="© OpenStreetMap contributors, SRTM — ODbL/CC BY-SA",
             license="CC BY-SA / ODbL",
             license_url="https://opentopomap.org/credits",
             offline_allowed=True,
