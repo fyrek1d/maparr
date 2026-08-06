@@ -5,8 +5,6 @@
 
 > **Maparr** is a self-hosted offline map manager for homeserver users. It provides an easy-to-use web interface to download, manage, and serve map data entirely from your local server—no internet connection required after downloading maps.
 
-![Screenshot](docs/screenshots/maparr-viewer.svg)
-
 ## ✨ Features
 
 ### Admin Interface
