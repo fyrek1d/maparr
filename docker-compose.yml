@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  maparr:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: maparr
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - maparr_data:/app/data
+    environment:
+      # Core settings
+      - MAPARR_DATABASE_URL=sqlite:////app/data/maparr.db
+      - MAPARR_DATA_DIR=/app/data/maps
+      - MAPARR_CONFIG_DIR=/app/data
+      - MAPARR_BACKUP_DIR=/app/data/backups
+      - MAPARR_TMP_DIR=/app/data/tmp
+      - MAPARR_JWT_SECRET=${MAPARR_JWT_SECRET:-$(head /dev/urandom | tr -dc A-Za-z0-9_ | head -c 32 ; echo '')}
+      - MAPARR_ALLOW_REGISTRATION=false # Set to true to allow user self-registration on first boot
+      - MAPARR_BOOTSTRAP_ADMIN_USERNAME=${MAPARR_BOOTSTRAP_ADMIN_USERNAME:-admin}
+      - MAPARR_BOOTSTRAP_ADMIN_PASSWORD=${MAPARR_BOOTSTRAP_ADMIN_PASSWORD}
+      - MAPARR_BOOTSTRAP_ADMIN_EMAIL=${MAPARR_BOOTSTRAP_ADMIN_EMAIL:-admin@localhost}
+      # Logging
+      - MAPARR_LOG_LEVEL=info
+      - MAPARR_JSON_LOGS=false
+      # Optional: OIDC/LDAP configuration can be done via Admin UI
+      # - MAPARR_LDAP_ENABLED=true
+      # - MAPARR_LDAP_URL=ldap://your-ldap-server:389
+      # - MAPARR_LDAP_BIND_DN=cn=admin,dc=example,dc=com
+      # - MAPARR_LDAP_BIND_PASSWORD=your_ldap_password
+      # Notifications
+      - MAPARR_NOTIFICATIONS_NTFY_URL=
+      - MAPARR_NOTIFICATIONS_NTFY_TOPIC=maparr
+      - MAPARR_NOTIFICATIONS_WEBHOOK_URL=
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+volumes:
+  maparr_data:

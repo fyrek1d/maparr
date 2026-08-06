@@ -1,0 +1,79 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "maparr"
+version = "0.1.0"
+description = "Self-hosted offline map manager for homeservers"
+readme = "../README.md"
+requires-python = ">=3.11"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Maparr Contributors" }]
+keywords = ["maps", "offline", "self-hosted", "homelab", "mbtiles", "gps"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Web Environment",
+    "Framework :: FastAPI",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: GIS",
+    "Topic :: System :: Archiving :: Backup",
+]
+dependencies = [
+    "fastapi>=0.115,<1.0",
+    "uvicorn[standard]>=0.30",
+    "sqlalchemy>=2.0,<3.0",
+    "pydantic>=2.8,<3.0",
+    "pydantic-settings>=2.4",
+    "bcrypt>=4.1",
+    "pyjwt>=2.8",
+    "httpx>=0.27",
+    "python-multipart>=0.0.9",
+    "gpxpy>=1.6",
+    "orjson>=3.10",
+    "prometheus-client>=0.20",
+    "aiofiles>=24.1",
+]
+
+[project.optional-dependencies]
+# Lightweight LDAP support (optional; install to enable LDAP auth)
+ldap = ["ldap3>=2.9"]
+# Development / test dependencies
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "ruff>=0.5",
+    "respx>=0.21",
+]
+
+[project.scripts]
+maparr = "maparr.main:run"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["maparr*"]
+
+[tool.setuptools.package-data]
+maparr = ["data/*.json", "data/geojson/*.geojson"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["E402"]
