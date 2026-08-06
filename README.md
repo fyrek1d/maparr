@@ -40,13 +40,38 @@
 
 ### Docker Compose (Recommended)
 
+```yaml
+services:
+  maparr:
+    image: ghcr.io/fyrek1d/maparr:latest
+    container_name: maparr
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - maparr_data:/app/data
+    environment:
+      - MAPARR_DATABASE_URL=sqlite:////app/data/maparr.db
+      - MAPARR_JWT_SECRET=change-me-to-a-long-random-string
+      # First-run admin bootstrap:
+      - MAPARR_BOOTSTRAP_ADMIN_USERNAME=admin
+      - MAPARR_BOOTSTRAP_ADMIN_PASSWORD=${MAPARR_BOOTSTRAP_ADMIN_PASSWORD}
+      - MAPARR_BOOTSTRAP_ADMIN_EMAIL=admin@localhost
+      - MAPARR_ALLOW_REGISTRATION=false
+
+volumes:
+  maparr_data:
+```
+
+Or clone the repo and build locally:
+
 ```bash
-git clone https://git.fyrek.dev/fyrek/maparr.git
+git clone https://github.com/fyrek1d/maparr.git
 cd maparr
 docker compose up -d
 ```
 
-Access the admin interface at `http://localhost:8080` and configure your first map download.
+Access the admin interface at `http://localhost:8000` and configure your first map download.
 
 ### Manual Installation
 

@@ -1,7 +1,6 @@
-version: '3.8'
-
 services:
   maparr:
+    image: ghcr.io/fyrek1d/maparr:latest
     build:
       context: .
       dockerfile: Dockerfile
