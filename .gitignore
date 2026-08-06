@@ -23,10 +23,10 @@ frontend/.vite/
 !.env.example
 
 # Runtime data (local dev only)
-data/
+/data/
 *.sqlite3
 *.db
-backups/
+/backups/
 
 # OS / editor
 .DS_Store
