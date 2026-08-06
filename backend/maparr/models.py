@@ -26,7 +26,7 @@ def _uuid() -> str:
 
 
 def _utcnow() -> dt.datetime:
-    return dt.datetime.now(dt.timezone.utc)
+    return dt.datetime.now(dt.UTC)
 
 
 class TimestampMixin:
@@ -49,9 +49,9 @@ class User(Base, TimestampMixin):
     provider_sub: Mapped[str] = mapped_column(String(255), default="", index=True)
     last_login_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
-    bookmarks: Mapped[list["Bookmark"]] = relationship(back_populates="user", cascade="all, delete-orphan")
-    markers: Mapped[list["Marker"]] = relationship(back_populates="user", cascade="all, delete-orphan")
-    api_keys: Mapped[list["ApiKey"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+    bookmarks: Mapped[list[Bookmark]] = relationship(back_populates="user", cascade="all, delete-orphan")
+    markers: Mapped[list[Marker]] = relationship(back_populates="user", cascade="all, delete-orphan")
+    api_keys: Mapped[list[ApiKey]] = relationship(back_populates="user", cascade="all, delete-orphan")
 
 
 class DownloadRegion(Base):
@@ -115,7 +115,7 @@ class Map(Base, TimestampMixin):
     paused_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     options: Mapped[dict] = mapped_column(JSON, default=dict)
 
-    overlays: Mapped[list["MapLayer"]] = relationship(back_populates="map", cascade="all, delete-orphan")
+    overlays: Mapped[list[MapLayer]] = relationship(back_populates="map", cascade="all, delete-orphan")
 
 
 class MapLayer(Base):

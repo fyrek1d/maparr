@@ -23,9 +23,8 @@ async def import_gpx(file: UploadFile, session: SessionDep, user: UserDep):
     try:
         parsed = parse_gpx(content)
     except Exception as exc:  # noqa: BLE001
-        raise HTTPException(status_code=400, detail=f"Invalid GPX: {exc}")
+        raise HTTPException(status_code=400, detail=f"Invalid GPX: {exc}") from exc
 
-    name = (file.filename or "import").rsplit(".", 1)[0]
     for kind, items in (("track", parsed["tracks"]), ("route", parsed["routes"])):
         for item in items:
             track = GpxTrack(user_id=user.id, name=item["name"], track_type=kind,

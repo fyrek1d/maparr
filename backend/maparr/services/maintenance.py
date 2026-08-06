@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import asyncio
 import datetime as dt
-import shutil
 from typing import Any
 
 from ..config import get_settings
@@ -37,7 +36,7 @@ class MaintenanceLoop:
         if self._task:
             try:
                 await asyncio.wait_for(self._task, timeout=5)
-            except (asyncio.TimeoutError, asyncio.CancelledError):
+            except (TimeoutError, asyncio.CancelledError):
                 self._task.cancel()
             self._task = None
 
@@ -46,7 +45,7 @@ class MaintenanceLoop:
         while not self._stop.is_set():
             try:
                 await asyncio.wait_for(self._stop.wait(), timeout=settings.maintenance_interval_seconds)
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 pass
             if self._stop.is_set():
                 break

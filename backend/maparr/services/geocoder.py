@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import unicodedata
 
-from .geodata import admin1, cities, countries, search_regions
+from .geodata import admin1, cities, countries
 from .geometry import haversine_km, point_in_rings
 
 

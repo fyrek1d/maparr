@@ -5,9 +5,8 @@ from __future__ import annotations
 import datetime as dt
 
 import jwt as pyjwt
-from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
+from fastapi import APIRouter, HTTPException, Query, Request, Response, status
 from sqlalchemy import or_
-from sqlalchemy.orm import Session
 
 from .. import security
 from ..config import get_settings
@@ -55,7 +54,7 @@ def login(payload: LoginRequest, request: Request, session: SessionDep, response
     if user is None or not user.is_active:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
 
-    user.last_login_at = dt.datetime.now(dt.timezone.utc)
+    user.last_login_at = dt.datetime.now(dt.UTC)
     session.commit()
     _maybe_set_cookie(response, security.make_token_pair(user.id, user.role))
     return _token_response(user)
@@ -65,8 +64,9 @@ def login(payload: LoginRequest, request: Request, session: SessionDep, response
 def refresh(payload: RefreshRequest, request: Request, response: Response, session: SessionDep):
     try:
         claims = security.decode_token(payload.refresh_token, security.REFRESH)
-    except pyjwt.PyJWTError:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh token")
+    except pyjwt.PyJWTError as exc:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail="Invalid refresh token") from exc
     user = session.get(User, claims.get("sub"))
     if user is None or not user.is_active:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
@@ -108,8 +108,8 @@ async def oidc_login(provider_id: str, request: Request, session: SessionDep):
     cfg = get_oidc_providers(session)
     try:
         url = await get_oidc().build_login_url(cfg, provider_id, _base_url(request))
-    except KeyError:
-        raise HTTPException(status_code=404, detail="Unknown OIDC provider")
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail="Unknown OIDC provider") from exc
     return {"redirect_url": url}
 
 
@@ -125,7 +125,7 @@ async def oidc_callback(
         info = await get_oidc().exchange(get_oidc_providers(session), code, state, _base_url(request))
     except (ValueError, Exception) as exc:  # noqa: BLE001
         log.warning("oidc callback failed: %s", exc)
-        raise HTTPException(status_code=400, detail=f"OIDC authentication failed: {exc}")
+        raise HTTPException(status_code=400, detail=f"OIDC authentication failed: {exc}") from exc
 
     user = session.query(User).filter(User.provider == "oidc",
                                       User.provider_sub == info["sub"]).first()
@@ -140,7 +140,7 @@ async def oidc_callback(
             session.add(user)
             session.commit()
             session.refresh(user)
-    user.last_login_at = dt.datetime.now(dt.timezone.utc)
+    user.last_login_at = dt.datetime.now(dt.UTC)
     session.commit()
     pair = security.make_token_pair(user.id, user.role)
     _maybe_set_cookie(response, pair)

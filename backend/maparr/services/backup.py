@@ -10,7 +10,6 @@ from typing import Any
 
 from ..config import get_settings
 from .logging import log
-from .mbtiles import MBTilesReader
 
 
 def _stamp() -> str:
@@ -49,7 +48,7 @@ def create_backup(include_maps: bool = True) -> dict[str, Any]:
 
     total = sum(f.stat().st_size for f in backup_dir.rglob("*") if f.is_file())
     manifest = {
-        "created_at": dt.datetime.now(dt.timezone.utc).isoformat(),
+        "created_at": dt.datetime.now(dt.UTC).isoformat(),
         "version": "0.1.0",
         "maps_included": copied,
         "total_bytes": total,
@@ -122,13 +121,13 @@ def prune_backups(keep_days: int | None = None) -> int:
     """Delete backups older than ``keep_days`` (default from settings)."""
     settings = get_settings()
     keep_days = keep_days or settings.backup_keep_days
-    cutoff = dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=keep_days)
+    cutoff = dt.datetime.now(dt.UTC) - dt.timedelta(days=keep_days)
     removed = 0
     for b in list_backups():
         try:
             created = dt.datetime.fromisoformat(b["created_at"].replace("Z", "+00:00"))
         except (ValueError, TypeError):
-            created = dt.datetime.min.replace(tzinfo=dt.timezone.utc)
+            created = dt.datetime.min.replace(tzinfo=dt.UTC)
         if created < cutoff:
             delete_backup(b["name"])
             removed += 1

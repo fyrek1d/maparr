@@ -30,7 +30,7 @@ def verify_password(password: str, password_hash: str) -> bool:
 
 
 def _now() -> int:
-    return int(dt.datetime.now(dt.timezone.utc).timestamp())
+    return int(dt.datetime.now(dt.UTC).timestamp())
 
 
 def create_token(user_id: str, token_type: str = ACCESS, extra: dict | None = None) -> str:

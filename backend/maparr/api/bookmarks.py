@@ -5,7 +5,6 @@ from __future__ import annotations
 import secrets
 
 from fastapi import APIRouter, HTTPException
-from sqlalchemy.orm import Session
 
 from ..deps import SessionDep, UserDep
 from ..models import Bookmark, User
@@ -40,7 +39,7 @@ def create_bookmark(payload: BookmarkCreate, session: SessionDep, user: UserDep)
 @router.get("/{bookmark_id}", response_model=BookmarkOut)
 def get_bookmark(bookmark_id: str, session: SessionDep, user: UserDep):
     book = session.get(Bookmark, bookmark_id)
-    if book is None or not _share(book, user):
+    if book is None or not _owns(book, user):
         raise HTTPException(status_code=404, detail="Bookmark not found")
     return book
 
@@ -49,7 +48,7 @@ def get_bookmark(bookmark_id: str, session: SessionDep, user: UserDep):
 def update_bookmark(bookmark_id: str, payload: BookmarkUpdate,
                     session: SessionDep, user: UserDep):
     book = session.get(Bookmark, bookmark_id)
-    if book is None or not _share(book, user):
+    if book is None or not _owns(book, user):
         raise HTTPException(status_code=404, detail="Bookmark not found")
     for field, value in payload.model_dump(exclude_unset=True).items():
         setattr(book, field, value)
@@ -61,7 +60,7 @@ def update_bookmark(bookmark_id: str, payload: BookmarkUpdate,
 @router.delete("/{bookmark_id}", status_code=204)
 def delete_bookmark(bookmark_id: str, session: SessionDep, user: UserDep):
     book = session.get(Bookmark, bookmark_id)
-    if book is None or not _share(book, user):
+    if book is None or not _owns(book, user):
         raise HTTPException(status_code=404, detail="Bookmark not found")
     session.delete(book)
     session.commit()

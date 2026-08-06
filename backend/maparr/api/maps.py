@@ -3,22 +3,16 @@
 from __future__ import annotations
 
 import asyncio
-import datetime as dt
-import uuid
-from pathlib import Path
 
-from fastapi import APIRouter, BackgroundTasks, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query
 from sqlalchemy.orm import Session
 
-from ..config import get_settings
 from ..deps import AdminDep, SessionDep
 from ..models import Map, MapLayer
 from ..schemas import (
     DownloadCreate,
     DownloadEstimate,
-    IntegrityResult,
     MapDetail,
-    MapImport,
     MapLayerOut,
     MapLayerUpdate,
     MapOut,
@@ -26,17 +20,13 @@ from ..schemas import (
 )
 from ..services import providers as prov_svc
 from ..services.downloader import (
-    STATUS_CANCELLED,
     STATUS_COMPLETE,
     STATUS_PAUSED,
     get_manager,
     map_to_out,
 )
 from ..services.estimator import estimate_download, human_size
-from ..services.geometry import normalize_bbox, point_in_rings
-from ..services.mbtiles import MBTilesReader
-from ..services.metrics import DOWNLOADS_STARTED
-from ..services.tile_server import clear_reader_pool
+from ..services.geometry import normalize_bbox
 from ..services.webhooks import dispatch
 from .regions import _to_region
 
@@ -181,6 +171,9 @@ def storage_breakdown(session: SessionDep, admin: AdminDep):
 
 @router.get("/{map_id}", response_model=MapDetail)
 def get_map(map_id: str, session: SessionDep):
+    row = session.get(Map, map_id)
+    if row is None:
+        raise HTTPException(status_code=404, detail="Map not found")
     return MapOut.model_validate(map_to_out(row).model_dump())
 
 

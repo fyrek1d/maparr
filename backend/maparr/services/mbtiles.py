@@ -10,8 +10,8 @@ import os
 import sqlite3
 import time
 import zlib
+from collections.abc import Iterator
 from pathlib import Path
-from typing import Iterator
 
 CREATE_TILES = """
 CREATE TABLE IF NOT EXISTS tiles (
@@ -57,7 +57,7 @@ class MBTiles:
             self._conn.close()
             self._conn = None
 
-    def __enter__(self) -> "MBTiles":
+    def __enter__(self) -> MBTiles:
         self._connect()
         return self
 
@@ -133,7 +133,7 @@ class MBTilesWriter(MBTiles):
 class MBTilesReader(MBTiles):
     """Read tiles and metadata from an MBTiles file."""
 
-    def open(self) -> "MBTilesReader":
+    def open(self) -> MBTilesReader:
         self._connect()
         return self
 

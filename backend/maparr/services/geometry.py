@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import math
-from typing import Iterable
+from collections.abc import Iterable
 
 LON_MIN, LON_MAX = -180.0, 180.0
 LAT_MIN, LAT_MAX = -85.0511, 85.0511

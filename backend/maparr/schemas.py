@@ -223,7 +223,7 @@ class MapOut(ORMModel):
 
 
 class MapDetail(MapOut):
-    overlays: list["MapLayerOut"] = Field(default_factory=list)
+    overlays: list[MapLayerOut] = Field(default_factory=list)
 
 
 class MapLayerOut(ORMModel):

@@ -13,7 +13,6 @@ from typing import Any
 import httpx
 from sqlalchemy.orm import Session
 
-from ..config import get_settings
 from ..db import get_db_session
 from ..models import Webhook
 from .logging import log
@@ -47,7 +46,7 @@ def _load_webhooks(session: Session) -> list[Webhook]:
 
 async def _deliver(client: httpx.AsyncClient, webhook: Webhook, event: str,
                   payload: dict[str, Any]) -> None:
-    body = json.dumps({"event": event, "timestamp": dt.datetime.now(dt.timezone.utc).isoformat(),
+    body = json.dumps({"event": event, "timestamp": dt.datetime.now(dt.UTC).isoformat(),
                        "data": payload}).encode("utf-8")
     headers = {"Content-Type": "application/json", "User-Agent": "Maparr/0.1"}
     if webhook.secret:
@@ -63,7 +62,7 @@ async def _deliver(client: httpx.AsyncClient, webhook: Webhook, event: str,
     try:
         row = session.get(Webhook, webhook.id)
         if row:
-            row.last_delivery_at = dt.datetime.now(dt.timezone.utc)
+            row.last_delivery_at = dt.datetime.now(dt.UTC)
             row.last_delivery_status = status
             session.commit()
     finally:

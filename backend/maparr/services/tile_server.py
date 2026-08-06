@@ -9,7 +9,6 @@ from threading import Lock
 
 from sqlalchemy.orm import Session
 
-from ..db import get_db_session
 from ..models import Map
 from .logging import log
 from .mbtiles import MBTilesReader

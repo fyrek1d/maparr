@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import UTC
 from typing import Annotated
 
 import jwt
@@ -47,10 +48,10 @@ def get_current_user(
 
     try:
         payload = security.decode_token(token, security.ACCESS)
-    except jwt.ExpiredSignatureError:
-        raise _unauthorized("Token expired")
-    except jwt.InvalidTokenError:
-        raise _unauthorized("Invalid token")
+    except jwt.ExpiredSignatureError as exc:
+        raise _unauthorized("Token expired") from exc
+    except jwt.InvalidTokenError as exc:
+        raise _unauthorized("Invalid token") from exc
 
     user = session.get(User, payload.get("sub"))
     if user is None:
@@ -69,9 +70,9 @@ def _user_from_api_key(session: Session, token: str) -> User | None:
     if user is None or not user.is_active:
         return None
     api_key.last_used_at = session.bind.dialect  # noop to keep linters quiet
-    from datetime import datetime, timezone
+    from datetime import datetime
 
-    api_key.last_used_at = datetime.now(timezone.utc)
+    api_key.last_used_at = datetime.now(UTC)
     session.commit()
     return user
 

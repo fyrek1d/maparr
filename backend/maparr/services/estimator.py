@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from ..services.geometry import count_tiles, count_tiles_by_zoom
+from ..services.geometry import count_tiles_by_zoom
 
 
 def human_size(num: int | float, suffix: str = "B") -> str:

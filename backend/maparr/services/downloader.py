@@ -103,7 +103,7 @@ class DownloadManager:
 
     async def shutdown(self) -> None:
         """Cancel all active jobs on application shutdown."""
-        for job_id, job in list(self._jobs.items()):
+        for _job_id, job in list(self._jobs.items()):
             job.cancelled = True
             job._resume_event.set()
             if job.task and job.task is not asyncio.current_task():
@@ -217,7 +217,6 @@ class DownloadManager:
 
     # ------------------------------------------------------------------
     async def _run(self, job: DownloadJob) -> None:
-        settings = get_settings()
         job._resume_event = asyncio.Event()
         job._resume_event.set()
         job.started_at = time.time()
@@ -402,11 +401,11 @@ class DownloadManager:
             if row is None:
                 return
             if started:
-                row.started_at = dt.datetime.now(dt.timezone.utc)
+                row.started_at = dt.datetime.now(dt.UTC)
                 row.paused_at = None
             row.status = status
             if status == STATUS_PAUSED:
-                row.paused_at = dt.datetime.now(dt.timezone.utc)
+                row.paused_at = dt.datetime.now(dt.UTC)
             elif status == STATUS_DOWNLOADING and row.paused_at is not None:
                 row.paused_at = None
             row.tiles_total = job.tiles_total if job else row.tiles_total
@@ -415,7 +414,7 @@ class DownloadManager:
             row.speed = job.speed if job else 0.0
             row.eta_seconds = job.eta_seconds if job else 0
             if finished:
-                row.completed_at = dt.datetime.now(dt.timezone.utc)
+                row.completed_at = dt.datetime.now(dt.UTC)
                 row.error = ""
                 from pathlib import Path as P
 
