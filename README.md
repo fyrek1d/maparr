@@ -1,7 +1,7 @@
 # Maparr
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![Docker](https://img.shields.io/badge/Docker-Ready-green.svg)](https://hub.docker.com/r/maparr/maparr)
+[![Docker](https://img.shields.io/badge/Docker-GHCR-green.svg)](https://github.com/fyrek1d/maparr/pkgs/container/maparr)
 
 > **Maparr** is a self-hosted offline map manager for homeserver users. It provides an easy-to-use web interface to download, manage, and serve map data entirely from your local server—no internet connection required after downloading maps.
 
@@ -71,22 +71,9 @@ docker compose up -d
 
 Access the admin interface at `http://localhost:8000` and configure your first map download.
 
-### Manual Installation
-
-See [Installation Guide](docs/installation.md)
-
 ## 📚 Documentation
 
-- [User Guide](docs/user-guide.md)
-- [Admin Guide](docs/admin-guide.md)
-- [API Documentation](docs/api.md)
-- [Configuration](docs/configuration.md)
-- [Environment Variables](docs/environment-variables.md)
-- [Troubleshooting](docs/troubleshooting.md)
-
-## 🛠️ Development
-
-See [Development Guide](docs/development.md)
+See the [Documentation Index](docs/index.md).
 
 ## 📦 Map Providers
 
