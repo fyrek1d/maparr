@@ -38,6 +38,7 @@ SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, futu
 
 
 def init_db() -> None:
+    get_settings().ensure_dirs()
     from . import models  # noqa: F401  (register models)
     Base.metadata.create_all(bind=engine)
 

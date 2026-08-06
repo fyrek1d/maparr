@@ -1,10 +1,18 @@
-# Base image for Maparr backend (Python + dependencies)
+# ---- Frontend build stage ----
+FROM node:20-bookworm-slim AS frontend
 
-FROM python:3.11-slim AS builder
+WORKDIR /src/frontend
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm ci
+COPY frontend/ .
+RUN npm run build
 
-WORKDIR /app
+# ---- Backend build stage ----
+FROM python:3.11-slim-bookworm AS builder
 
-# Install build dependencies
+WORKDIR /src/backend
+COPY backend/ .
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     pkg-config \
@@ -13,50 +21,30 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libssl-dev \
     libxml2-dev \
     libxslt1-dev \
-    gcc \
-    g++ \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy project files and install backend dependencies
-COPY ./backend .
 RUN pip install --no-cache-dir --upgrade pip
-RUN pip install --no-cache-dir -e ".[dev,ldap]"
+RUN pip install --no-cache-dir .
 
-# Copy frontend code and install dependencies
-COPY ./frontend .
-RUN npm ci --prefix $(pwd)/frontend
-RUN npm run build --prefix $(pwd)/frontend
-
-# --- Final Stage ---
-
-FROM python:3.11-slim
+# ---- Runtime stage ----
+FROM python:3.11-slim-bookworm
 
 WORKDIR /app
 
-# Install runtime dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libsodium23 \
     libffi8 \
     libssl3 \
     libxml2 \
-    libxslt1 \
+    libxslt1.1 \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy installed backend from builder stage
+# Install backend (with bundled geodata) and copy frontend build
 COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
-COPY --from=builder /usr/local/bin /usr/local/bin
+COPY --from=builder /usr/local/bin/maparr /usr/local/bin/maparr
+COPY --from=frontend /src/frontend/dist ./frontend/dist
 
-# Copy frontend build artifacts
-COPY --from=builder /app/frontend/dist ./frontend/dist
-
-# Copy static assets (geodata, etc.)
-COPY --from=builder /app/backend/maparr/data ./backend/maparr/data
-
-# Copy the entrypoint script
-COPY maparr.py .
-
-# Expose port and set default command
 EXPOSE 8000
 
-CMD ["python", "maparr.py"]
+CMD ["maparr", "--host", "0.0.0.0", "--port", "8000"]
